@@ -1,21 +1,14 @@
 import { InMemoryNotificationRepository } from "@test/repositories/in-memory-respository-notifications"
-import { SendNotification } from "./send-notification" 
 import { CancelNotification } from "./cancel-notification"
 import { NotificationNotFoundError } from "./errors/notification-not-found-error"
+import { makeNotification } from "@test/factories/norification-factory"
 
 describe('Cancel Notification', () => {
     test('deve ser capaz de cancelar a notificação', async () => {
-        const notificationRepository = new InMemoryNotificationRepository()
-        
-        const sendNotification = new SendNotification(notificationRepository)
+        const notificationRepository = new InMemoryNotificationRepository()                
         const cancelNotification = new CancelNotification(notificationRepository)
 
-        const { notification } = await sendNotification.execute({
-            recipientID: 'example-recipiendID', 
-            content: 'Exemplo de notificação a ser cancelada', 
-            category: 'Testes'
-        })        
-
+        const notification = makeNotification()
         await cancelNotification.execute({
             notificationID: notification.id
         })        
