@@ -1,29 +1,32 @@
 import { InMemoryNotificationRepository } from "@test/repositories/in-memory-respository-notifications"
-import { CancelNotification } from "./cancel-notification"
+import { ReadNotification } from "./read-notification"
 import { NotificationNotFoundError } from "./errors/notification-not-found-error"
 import { makeNotification } from "@test/factories/norification-factory"
 
-describe('Cancel Notification', () => {
-    test('deve ser capaz de cancelar a notificação', async () => {
+describe('Read Notification', () => {
+    test('deve ser capaz de ler a notificação', async () => {
         const notificationRepository = new InMemoryNotificationRepository()                
-        const cancelNotification = new CancelNotification(notificationRepository)
+        const readNotification = new ReadNotification(notificationRepository)
 
-        const notification = makeNotification()
-        await cancelNotification.execute({
+        const notification = makeNotification() 
+        
+        await notificationRepository.create(notification)
+
+        await readNotification.execute({
             notificationID: notification.id
         })        
 
-        expect(notificationRepository.notifications[0].cancelAt).toEqual(
+        expect(notificationRepository.notifications[0].readAt).toEqual(
             expect.any(Date)
         )         
     }) 
 
-    test('não deve ser capaz de cancelar uma notificação não existente', async () => {
+    test('não deve ser capaz de ler uma notificação não existente', async () => {
         const notificationRepository = new InMemoryNotificationRepository()                
-        const cancelNotification = new CancelNotification(notificationRepository)                       
+        const readNotification = new ReadNotification(notificationRepository)                       
 
         expect(() => {
-            return cancelNotification.execute({
+            return readNotification.execute({
                 notificationID: 'fake-notificationID'
             }) 
         }).rejects.toThrow(NotificationNotFoundError)        
